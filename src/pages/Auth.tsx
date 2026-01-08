@@ -40,7 +40,10 @@ const Auth = () => {
 
     // Mock auth - navigate to onboarding
     navigate("/onboarding");
-  };
+  } catch (error) {
+    alert("Login failed: " + (error as Error).message);
+  }
+};
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
