@@ -19,38 +19,119 @@ interface Question {
   correct: number;
 }
 
-const quizQuestions: Question[] = [
+const quizQuestions: Question[] = 
+[
   {
     id: 1,
-    question: "What component is required when connecting an LED to a microcontroller?",
-    options: ["Capacitor", "Resistor", "Inductor", "Transistor"],
-    correct: 1,
+    question: "Why is a delay required between turning the LED ON and OFF in an 8051 program?",
+    options: [
+      "To protect the microcontroller from overheating",
+      "To make the LED brighter",
+      "To allow the human eye to perceive the blinking",
+      "To synchronize the crystal oscillator"
+    ],
+    correct: 2
   },
   {
     id: 2,
-    question: "What is the typical forward voltage of a red LED?",
-    options: ["0.7V", "1.8-2.2V", "3.3V", "5V"],
-    correct: 1,
+    question: "In the given circuit, the LED turns ON when the pin P2.0 is set to logic 0. What is the main reason for this configuration?",
+    options: [
+      "The LED is faulty",
+      "The 8051 is better at sourcing current",
+      "The 8051 sinks current more efficiently than it sources",
+      "Logic 0 always represents ON in microcontrollers"
+    ],
+    correct: 2
   },
   {
     id: 3,
-    question: "Which pin on an LED is the cathode?",
-    options: ["The longer leg", "The shorter leg", "The colored leg", "The flat side"],
-    correct: 1,
+    question: "What is the primary function of the resistor connected in series with the LED?",
+    options: [
+      "Increase LED brightness",
+      "Limit current to prevent LED damage",
+      "Reduce voltage for the microcontroller",
+      "Improve clock accuracy"
+    ],
+    correct: 1
   },
   {
     id: 4,
-    question: "What happens if you connect an LED without a current-limiting resistor?",
-    options: ["Nothing", "It dims", "It may burn out", "It blinks"],
-    correct: 2,
+    question: "Which header file is required to access special function registers of the 8051?",
+    options: [
+      "<stdio.h>",
+      "<8051.h>",
+      "<micro.h>",
+      "<reg51.h>"
+    ],
+    correct: 3
   },
   {
     id: 5,
-    question: "In Arduino, which function turns a digital pin HIGH?",
-    options: ["analogWrite()", "digitalWrite()", "pinWrite()", "setHigh()"],
-    correct: 1,
+    question: "What does the statement sbit LED_PIN = P2^0; accomplish?",
+    options: [
+      "It configures Port 2 as input",
+      "It assigns the entire Port 2 to the LED",
+      "It creates a bit-level alias for pin P2.0",
+      "It initializes the LED to OFF state"
+    ],
+    correct: 2
   },
-];
+  {
+    id: 6,
+    question: "If the delay function is completely removed from the program, what would most likely happen?",
+    options: [
+      "The LED will stop working",
+      "The LED will blink very slowly",
+      "The LED will appear dim or constantly ON",
+      "The microcontroller will reset"
+    ],
+    correct: 2
+  },
+  {
+    id: 7,
+    question: "What is the purpose of the while(1) loop in the main function?",
+    options: [
+      "To run the program once",
+      "To prevent compilation errors",
+      "To create an infinite execution loop",
+      "To initialize hardware components"
+    ],
+    correct: 2
+  },
+  {
+    id: 8,
+    question: "Why is an 11.0592 MHz crystal oscillator commonly used with the 8051?",
+    options: [
+      "It reduces power consumption",
+      "It simplifies accurate timing and baud rate generation",
+      "It increases GPIO speed",
+      "It is mandatory for LED blinking"
+    ],
+    correct: 1
+  },
+  {
+    id: 9,
+    question: "If the LED is moved from P2.0 to P1.4, which change is required in the code?",
+    options: [
+      "Modify the delay function",
+      "Change the crystal frequency",
+      "Update the sbit pin definition",
+      "Replace <reg51.h>"
+    ],
+    correct: 2
+  },
+  {
+    id: 10,
+    question: "In the delay function, why are nested empty for loops used?",
+    options: [
+      "To reserve memory",
+      "To generate an interrupt",
+      "To waste CPU cycles and create time delay",
+      "To improve code readability"
+    ],
+    correct: 2
+  }
+]
 
 const Quiz = () => {
   const { mcId, topicId, moduleId } = useParams();
