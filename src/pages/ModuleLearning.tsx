@@ -11,6 +11,7 @@ import {
   Code,
   HelpCircle,
   CheckCircle,
+  X,
   Play,
 } from "lucide-react";
 
@@ -218,6 +219,36 @@ const ModuleLearning = () => {
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* Fullscreen simulation overlay when Simulation tab is active */}
+      {activeTab === "simulation" && (
+        <div className="fixed inset-0 z-50 bg-background/90 p-4 flex flex-col">
+          <div className="max-w-7xl mx-auto w-full flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="icon" onClick={() => setActiveTab("video")}>
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+              <span className="text-lg font-semibold text-foreground">Wokwi Simulation</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="icon" onClick={() => setActiveTab("video")}>
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex-1 max-w-7xl mx-auto w-full">
+            <div className="h-[calc(100vh-96px)] rounded-xl overflow-hidden bg-secondary">
+              <iframe
+                src="https://wokwi.com/projects/new/arduino-uno?embed=1&theme=dark"
+                className="w-full h-full border-0"
+                title="Wokwi Simulation"
+                allow="clipboard-write"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
