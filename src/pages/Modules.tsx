@@ -69,10 +69,17 @@ const Modules = () => {
   );
   const [hoveredLevel, setHoveredLevel] = useState<number | null>(null);
 
-  // Compute unlocked status: for now, lock all except first (per request).
-  // This can be reverted to progression logic (previous completed && quizScore >=75) later.
+  // Compute unlocked status strictly from previous level's quiz score >= 75
   const unlocked = useMemo(() => {
-    return levels.map((_, i) => i === 0);
+    return levels.map((_, i) => {
+      if (i === 0) return true;
+      try {
+        const prevQuiz = localStorage.getItem(`quiz-led-${i}`);
+        return prevQuiz ? parseInt(prevQuiz, 10) >= 75 : false;
+      } catch (e) {
+        return false;
+      }
+    });
   }, [levels]);
 
   const handleLevelClick = (levelIndex: number) => {
