@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -14,6 +14,7 @@ import {
   X,
   Play,
 } from "lucide-react";
+import AICodeMentor from "@/components/AICodeMentor";
 
 const ModuleLearning = () => {
   const { mcId, topicId, moduleId } = useParams();
@@ -37,6 +38,37 @@ const ModuleLearning = () => {
     if (!completedSections.includes(section)) {
       setCompletedSections([...completedSections, section]);
     }
+  };
+
+  const navigate = useNavigate();
+
+  // Mark the full module as completed (persisted) and go to next level automatically
+  const markModuleCompleted = () => {
+    if (!moduleId) return;
+    try {
+      localStorage.setItem(`completed-${moduleId}`, "true");
+      // assume full completion implies max quiz score for unlock purposes
+      localStorage.setItem(`quiz-${moduleId}`, "100");
+    } catch (e) {
+      // ignore storage failures
+    }
+
+    // ensure simulation section is marked locally too
+    if (!completedSections.includes("simulation")) setCompletedSections([...completedSections, "simulation"]);
+
+    // compute next module (supports led-<n> pattern)
+    const m = moduleId.match(/led-(\d+)/);
+    if (m && m[1]) {
+      const n = parseInt(m[1], 10);
+      const next = n + 1;
+      if (next <= 10) {
+        navigate(`/learn/${mcId}/${topicId}/led-${next}`);
+        return;
+      }
+    }
+
+    // fallback to modules overview
+    navigate(`/modules/${mcId}/${topicId}/beginner`);
   };
 
   const tabs = [
@@ -115,12 +147,35 @@ const ModuleLearning = () => {
               animate={{ opacity: 1, y: 0 }}
               className="glass-card rounded-2xl p-8 h-full"
             >
-              <div className="aspect-video bg-secondary rounded-xl flex items-center justify-center mb-6">
-                <div className="text-center">
-                  <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4">
+              <div className="aspect-video bg-secondary rounded-xl flex items-center justify-center mb-6 relative overflow-hidden">
+                <video
+                  ref={useRef<HTMLVideoElement | null>(null)}
+                  id="module-video"
+                  className="w-full h-full object-cover rounded-lg"
+                  preload="metadata"
+                  controls={true}
+                  poster="/placeholder.svg"
+                >
+                  <source src="/Arduino_Blink__First_Circuit.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+
+                {/* Centered play overlay for accessibility and clearer affordance on mobile */}
+                <div
+                  role="button"
+                  aria-label="Play video"
+                  onClick={() => {
+                    const v = document.getElementById("module-video") as HTMLVideoElement | null;
+                    if (v) {
+                      if (v.paused) v.play();
+                      else v.pause();
+                    }
+                  }}
+                  className="absolute inset-0 flex items-center justify-center pointer-events-auto"
+                >
+                  <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
                     <Play className="w-8 h-8 text-primary" />
                   </div>
-                  <p className="text-muted-foreground">LED Basics Tutorial Video</p>
                 </div>
               </div>
               <Button
@@ -176,13 +231,14 @@ const ModuleLearning = () => {
               animate={{ opacity: 1, y: 0 }}
               className="glass-card rounded-2xl p-4 h-full flex flex-col"
             >
-              <div className="flex-1 rounded-xl overflow-hidden bg-secondary min-h-[500px]">
+              <div className="flex-1 rounded-xl overflow-hidden bg-secondary min-h-[500px] relative">
                 <iframe
                   src="https://wokwi.com/projects/new/arduino-uno?embed=1&theme=dark"
                   className="w-full h-full border-0"
                   title="Wokwi Simulation"
                   allow="clipboard-write"
                 />
+                {/* (removed inline mentor) previously placed inside editor — mentor now renders fixed at viewport level */}
               </div>
               <div className="mt-4 flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">
@@ -190,7 +246,10 @@ const ModuleLearning = () => {
                 </p>
                 <Button
                   variant="hero"
-                  onClick={() => markComplete("simulation")}
+                  onClick={() => {
+                    // Use the full module completion handler so it persists and advances
+                    markModuleCompleted();
+                  }}
                   disabled={completedSections.includes("simulation")}
                 >
                   {completedSections.includes("simulation") ? "Completed ✓" : "Mark Complete"}
@@ -218,6 +277,8 @@ const ModuleLearning = () => {
             </motion.div>
           </TabsContent>
         </Tabs>
+        {/* Global AI Code Mentor button (fixed) - placed outside the Wokwi iframe */}
+        <AICodeMentor />
       </main>
 
       {/* Fullscreen simulation overlay when Simulation tab is active */}
@@ -231,6 +292,9 @@ const ModuleLearning = () => {
               <span className="text-lg font-semibold text-foreground">Wokwi Simulation</span>
             </div>
             <div className="flex items-center gap-2">
+              <Button variant="secondary" onClick={markModuleCompleted}>
+                Mark Complete & Next
+              </Button>
               <Button variant="ghost" size="icon" onClick={() => setActiveTab("video")}>
                 <X className="w-4 h-4" />
               </Button>

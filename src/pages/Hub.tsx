@@ -25,28 +25,12 @@ interface Microcontroller {
 
 const microcontrollers: Microcontroller[] = [
   {
-    id: "atmega328p",
-    name: "ATmega328P",
-    shortDesc: "Arduino's heart",
-    description: "The backbone of Arduino Uno. Perfect for beginners with extensive community support and countless project tutorials.",
-    features: ["8-bit AVR", "16MHz", "32KB Flash", "Arduino Compatible"],
-    color: "from-primary to-cyan-400",
-  },
-  {
     id: "8051",
     name: "8051",
     shortDesc: "Industry classic",
     description: "A timeless classic in embedded systems. Master the fundamentals with this industry-standard architecture.",
     features: ["8-bit CISC", "12MHz", "4KB ROM", "128B RAM"],
     color: "from-accent to-emerald-400",
-  },
-  {
-    id: "8085",
-    name: "8085",
-    shortDesc: "Academic favorite",
-    description: "The ideal processor for understanding computer architecture fundamentals and assembly programming.",
-    features: ["8-bit CPU", "3MHz", "64KB Address", "SOD/SID"],
-    color: "from-purple-500 to-pink-500",
   },
   {
     id: "pic18f",
@@ -56,6 +40,15 @@ const microcontrollers: Microcontroller[] = [
     features: ["8-bit PIC", "40MHz", "128KB Flash", "USB Ready"],
     color: "from-orange-500 to-yellow-500",
   },
+  {
+    id: "atmega328p",
+    name: "ATmega328P",
+    shortDesc: "Arduino's heart",
+    description: "The backbone of Arduino Uno. Perfect for beginners with extensive community support and countless project tutorials.",
+    features: ["8-bit AVR", "16MHz", "32KB Flash", "Arduino Compatible"],
+    color: "from-primary to-cyan-400",
+  },
+  
 ];
 
 const Hub = () => {

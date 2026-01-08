@@ -8,28 +8,20 @@ import {
 
 const faqs = [
   {
-    question: "What microcontrollers are covered?",
-    answer: "Swadhyay currently covers ATmega328p (Arduino), 8051, 8085, and PIC18F. Each comes with comprehensive modules covering everything from basic I/O to advanced communication protocols.",
+    question: "What makes Swadhyay different?",
+    answer: "Swadhyay focuses on mastery — guided modules, live simulations, and an AI tutor that provides contextual, code-aware feedback so you learn by doing, not by memorizing.",
   },
   {
-    question: "Do I need any hardware to get started?",
-    answer: "No hardware required! All simulations run in your browser using Wokwi's powerful embedded simulator. You can build circuits, write code, and see real-time results without purchasing any physical components.",
+    question: "Is this beginner friendly?",
+    answer: "Yes. Onboarding places you at the right level, and each module scaffolds concepts with videos, articles, simulations, and quizzes so beginners progress confidently.",
   },
   {
-    question: "How does the gamification system work?",
-    answer: "You earn XP by completing videos, articles, simulations, and quizzes. Maintain daily streaks for bonus points, compete on leaderboards, and unlock new modules as you progress. The more attempts you save on quizzes, the more XP you earn!",
+    question: "How does the AI tutor help?",
+    answer: "The AI tutor analyzes your code and simulation results, offers hints, explains mistakes, and suggests next steps — all tailored to your current module and progress.",
   },
   {
-    question: "What if I fail a quiz?",
-    answer: "You get 3 attempts per quiz with 24 hours between each. First-attempt passes earn maximum XP, while subsequent attempts earn progressively less. If you fail all 3, the quiz locks for 24 hours to encourage proper review.",
-  },
-  {
-    question: "Can I skip to advanced topics?",
-    answer: "Yes! During onboarding, you'll take diagnostic tests that can unlock advanced modules directly. However, prerequisites must be completed to ensure you have the foundational knowledge needed for success.",
-  },
-  {
-    question: "Is there an AI assistant available?",
-    answer: "Absolutely! Our context-aware AI chatbot is available on every page to help with platform navigation, explain concepts, and provide learning guidance. It understands your current progress and adapts its responses accordingly.",
+    question: "Is it free?",
+    answer: "Swadhyay offers a generous free tier with core modules and simulations. Premium plans unlock advanced modules, assessments, and priority AI guidance.",
   },
 ];
 

@@ -29,8 +29,8 @@ const Auth = () => {
     if (!identifier) return;
     if (!password) return;
 
-    // Mock auth - navigate to onboarding
-    navigate("/onboarding");
+    // Mock auth - navigate to hub (skip onboarding)
+    navigate("/hub");
   };
 
   return (

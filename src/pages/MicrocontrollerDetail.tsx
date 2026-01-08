@@ -2,6 +2,9 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { pinData, pinMap } from "@/components/pins/pinData";
+import Pin from "@/components/pins/Pin";
+import PinInfo from "@/components/pins/PinInfo";
 import {
   ArrowLeft,
   Cpu,
@@ -22,11 +25,6 @@ const microcontrollerData: Record<string, { name: string; description: string; p
   "8051": {
     name: "8051",
     description: "The 8051 is an 8-bit microcontroller with 4KB ROM and 128 bytes of RAM. It's a classic in embedded systems education.",
-    pinCount: 40,
-  },
-  "8085": {
-    name: "8085",
-    description: "The Intel 8085 is an 8-bit microprocessor that can address 64KB of memory. Ideal for learning computer architecture.",
     pinCount: 40,
   },
   pic18f: {
@@ -67,20 +65,6 @@ const MicrocontrollerDetail = () => {
   // Generate pin positions for the chip visualization
   const leftPins = Array.from({ length: mcData.pinCount / 2 }, (_, i) => i + 1);
   const rightPins = Array.from({ length: mcData.pinCount / 2 }, (_, i) => mcData.pinCount - i);
-
-  const pinLabels: Record<number, string> = {
-    1: "RESET",
-    2: "PD0 (RX)",
-    3: "PD1 (TX)",
-    7: "VCC",
-    8: "GND",
-    14: "PB0",
-    19: "ADC6",
-    20: "AVCC",
-    21: "AREF",
-    22: "GND",
-    28: "PC5 (SCL)",
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -132,70 +116,39 @@ const MicrocontrollerDetail = () => {
 
               {/* Left Pins */}
               <div className="absolute left-0 top-6 bottom-6 -translate-x-full pr-2 flex flex-col justify-between">
-                {leftPins.map((pin) => (
-                  <motion.div
-                    key={pin}
-                    onMouseEnter={() => setHoveredPin(pin)}
-                    onMouseLeave={() => setHoveredPin(null)}
-                    className="relative flex items-center gap-2 cursor-pointer group"
-                  >
-                    <span className={`text-xs font-mono transition-colors ${
-                      hoveredPin === pin ? "text-primary" : "text-muted-foreground"
-                    }`}>
-                      {pin}
-                    </span>
-                    <div className={`w-8 h-2 rounded-l transition-all ${
-                      hoveredPin === pin 
-                        ? "bg-primary glow-cyan" 
-                        : "bg-muted-foreground/50"
-                    }`} />
-                    
-                    {/* Tooltip */}
-                    {hoveredPin === pin && pinLabels[pin] && (
-                      <motion.div
-                        initial={{ opacity: 0, x: 10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="absolute right-full mr-4 px-3 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-lg whitespace-nowrap"
-                      >
-                        {pinLabels[pin]}
-                      </motion.div>
-                    )}
-                  </motion.div>
-                ))}
+                {leftPins.map((pinNumber) => {
+                  const data = pinMap.get(pinNumber);
+                  return (
+                    <div key={pinNumber}>
+                      {data ? (
+                        <Pin data={data} side="left" hovered={hoveredPin === pinNumber} onHover={setHoveredPin} />
+                      ) : (
+                        <div className="text-xs text-muted-foreground">{pinNumber}</div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Right Pins */}
               <div className="absolute right-0 top-6 bottom-6 translate-x-full pl-2 flex flex-col justify-between">
-                {rightPins.map((pin) => (
-                  <motion.div
-                    key={pin}
-                    onMouseEnter={() => setHoveredPin(pin)}
-                    onMouseLeave={() => setHoveredPin(null)}
-                    className="relative flex items-center gap-2 cursor-pointer group"
-                  >
-                    <div className={`w-8 h-2 rounded-r transition-all ${
-                      hoveredPin === pin 
-                        ? "bg-primary glow-cyan" 
-                        : "bg-muted-foreground/50"
-                    }`} />
-                    <span className={`text-xs font-mono transition-colors ${
-                      hoveredPin === pin ? "text-primary" : "text-muted-foreground"
-                    }`}>
-                      {pin}
-                    </span>
-                    
-                    {/* Tooltip */}
-                    {hoveredPin === pin && pinLabels[pin] && (
-                      <motion.div
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="absolute left-full ml-4 px-3 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-lg whitespace-nowrap"
-                      >
-                        {pinLabels[pin]}
-                      </motion.div>
-                    )}
-                  </motion.div>
-                ))}
+                {rightPins.map((pinNumber) => {
+                  const data = pinMap.get(pinNumber);
+                  return (
+                    <div key={pinNumber}>
+                      {data ? (
+                        <Pin data={data} side="right" hovered={hoveredPin === pinNumber} onHover={setHoveredPin} />
+                      ) : (
+                        <div className="text-xs text-muted-foreground">{pinNumber}</div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Side info panel */}
+              <div className="absolute right-[-20rem] top-8">
+                <PinInfo pin={hoveredPin ? pinMap.get(hoveredPin) ?? null : null} />
               </div>
             </div>
           </div>

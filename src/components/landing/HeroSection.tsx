@@ -77,11 +77,11 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-tight"
         >
-          <span className="text-foreground">Master</span>
+          Learn Hardware
           <br />
-          <span className="gradient-text text-glow-cyan">Microcontrollers</span>
+          <span className="gradient-text">the Smart Way.</span>
         </motion.h1>
 
         {/* Subheading */}
@@ -89,10 +89,9 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-12"
+          className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-12"
         >
-          Self-directed learning for the AI era. Build real circuits, write real code, 
-          and master embedded systems through interactive simulations and gamified challenges.
+          Swadhyay is an AI-powered tutor that helps you master microcontrollers through guided modules, live simulations, and personalized feedback.
         </motion.p>
 
         {/* CTA Buttons */}
@@ -104,14 +103,15 @@ const HeroSection = () => {
         >
           <Link to="/auth">
             <Button variant="hero" size="xl" className="group">
-              Start Learning
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              Begin Your Journey
+              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
-          <Button variant="heroOutline" size="xl" className="group">
-            <Play className="w-5 h-5" />
-            Watch Demo
-          </Button>
+          <Link to="/modules">
+            <Button variant="ghost" size="xl" className="group">
+              Explore Modules
+            </Button>
+          </Link>
         </motion.div>
 
         {/* Stats */}

@@ -18,8 +18,8 @@ const Signup = () => {
       alert("Passwords do not match");
       return;
     }
-    // Mock signup flow
-    navigate("/onboarding");
+    // Mock signup flow - go straight to hub
+    navigate("/hub");
   };
 
   return (
