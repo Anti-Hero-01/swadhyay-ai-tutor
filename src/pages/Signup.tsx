@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Cpu, Mail, Lock, User } from "lucide-react";
+import { signupUser } from "@/lib/api";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -18,8 +19,8 @@ const Signup = () => {
       alert("Passwords do not match");
       return;
     }
-    // Mock signup flow - go straight to hub
-    navigate("/hub");
+    // Mock signup flow
+    navigate("/onboarding");
   };
 
   return (

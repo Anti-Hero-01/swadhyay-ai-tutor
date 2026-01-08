@@ -1,3 +1,4 @@
+import { loginUser } from "@/lib/api";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
@@ -23,14 +24,22 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Basic validation
-    if (!identifier) return;
-    if (!password) return;
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    // Mock auth - navigate to hub (skip onboarding)
-    navigate("/hub");
+  if (!identifier || !password) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  try {
+    const data = await loginUser(identifier, password);
+
+    // Save JWT token
+    localStorage.setItem("token", data.access_token);
+
+    // Mock auth - navigate to onboarding
+    navigate("/onboarding");
   };
 
   return (
