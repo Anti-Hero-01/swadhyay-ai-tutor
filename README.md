@@ -1,232 +1,256 @@
 <div align="center">
 
-🎓 **Swadhyay (स्वाध्याय) — AI-Powered Self-Learning for Microcontrollers**
+🎓 Swadhyay (स्वाध्याय)
 
-Demo • Features • Architecture • Quick Start • Documentation
+AI-Assisted, Self-Directed Learning Platform for Microcontrollers
+
+Demo • Features • Architecture • AI Approach • Quick Start
 
 </div>
+📖 Overview
 
----
+Swadhyay (स्वाध्याय) is a research-grade, AI-assisted learning platform designed to transform how microcontrollers and embedded systems are taught.
 
-# 📖 Overview
+The platform removes dependency on physical labs while preserving real hardware understanding through structured learning, simulation, and AI-guided reflection.
 
-**Swadhyay (स्वाध्याय)** is a **production-grade, AI-powered microcontroller learning platform** that reimagines how embedded systems are taught — removing the dependency on physical labs while preserving hands-on depth.
+Swadhyay is built as a hackathon-ready prototype with scalable architecture, focused on personalization, inclusion, and sustainability in engineering education.
 
-Unlike traditional platforms that rely on static tutorials or hardware-heavy setups, Swadhyay enables learners to:
+🎯 The Problem
 
-- **Learn** concepts visually  
-- **Practice** by writing real microcontroller code  
-- **Simulate** circuits live in the browser  
-- **Reflect** with AI-guided feedback  
+Microcontroller education faces persistent challenges:
 
-All within a **self-directed, inclusive, and scalable learning ecosystem**.
+Physical labs are costly, capacity-limited, and inaccessible
 
----
+Students often memorize code instead of understanding hardware behavior
 
-# 🎯 The Problem
+One-to-one mentorship does not scale
 
-- Physical microcontroller labs are **costly, inaccessible, and unscalable**
-- Students often **copy code without understanding hardware behavior**
-- Institutions struggle to provide **individual mentorship at scale**
-- Hardware-centric education excludes:
-  - Remote learners
-  - Resource-constrained institutions
-  - Self-learners without lab access
+Hardware-centric learning excludes:
 
----
+Remote learners
 
-# 💡 Our Solution
+Resource-constrained institutions
 
-**Swadhyay transforms microcontroller education into a digital-first, AI-guided experience.**
+Self-learners without lab access
 
-- ✅ No physical lab required  
-- ✅ Learners build circuits and write code themselves  
-- ✅ Real-time simulation embedded directly in the platform  
-- ✅ AI mentor explains *why*, not just *what*  
-- ✅ Gamified progression ensures mastery, not memorization  
+💡 Our Solution
 
----
+Swadhyay introduces a digital-first, AI-assisted learning workflow for embedded systems.
 
-# ✨ Key Features
+✅ No physical hardware required, while preserving real hardware behavior through simulation
 
-## 🧠 Core Learning Capabilities
+✅ Learners write code themselves — no copy-paste learning
 
-| Feature | Description | Technology |
-|------|------------|------------|
-| Visual Pin Exploration | Interactive microcontroller pin diagrams | SVG + Motion |
-| Live Circuit Simulation | Build & run circuits in-browser | Wokwi (Embedded) |
-| Code-First Learning | Learners write all code themselves | C / Embedded C |
-| AI Code Mentor | Explains logic, errors & optimizations | LLM APIs |
-| Progressive Unlocks | Levels unlock only after mastery | XP + Quiz Engine |
+✅ Circuits are built and tested in-browser
 
----
+✅ AI mentor explains why something works or fails
 
-## 🎮 Gamification & Progression
+✅ Progression is gated by conceptual mastery, not completion
 
-- Candy-Crush–style **level map**
-- XP-based mastery system
-- Quiz-gated progression (≥75% required)
-- Streaks, milestones, and topic completion
-- Locked advanced modules until fundamentals are proven
+✨ Key Features
+🧠 Core Learning Capabilities
+Feature	Description	Implementation
+Interactive Pin Exploration	Hover-based pin explanations	SVG + Framer Motion
+Structured Learning Modules	Topic-wise progression	React + Routing
+Live Circuit Simulation	Real MCU behavior without hardware	Embedded Wokwi
+Code-First Practice	Learners write full programs	Embedded C
+AI Mentor	Contextual explanations & hints	LLM + RAG (planned)
+Mastery-Based Progression	Unlocks only after quiz validation	XP + Quiz Engine
+🎮 Gamification & Progression
 
----
+Level-based progression inspired by casual learning games
 
-## 🌍 Inclusion & Sustainability
+XP and mastery thresholds
 
-- No hardware → **zero electronic waste**
-- Accessible from low-resource environments
-- Self-paced learning for diverse backgrounds
-- Designed for institutions, individuals, and remote classrooms
+Quiz-gated advancement (≥75% required)
 
----
+Locked advanced modules until fundamentals are demonstrated
 
-# 🏗️ System Architecture
+Visual progress tracking per microcontroller and topic
 
-Frontend (React / Next.js)
+🌍 Inclusion & Sustainability
+
+No hardware → zero electronic waste
+
+Accessible from low-resource environments
+
+Self-paced learning for diverse backgrounds
+
+Suitable for individuals, classrooms, and institutions
+
+🏗️ System Architecture
+Frontend (React + Vite)
 │
 ├── Learning Modules
 ├── Interactive Pin Diagrams
 ├── Gamified Level Engine
 │
 ├── Simulation Layer
-│ └── Embedded Wokwi (Circuit + Code)
+│   └── Embedded Wokwi (Circuit + Code)
 │
-└── AI Mentor Layer
-├── Code Analysis
-├── Concept Explanation
-└── Personalized Hints
+└── AI Interaction Layer
+    ├── Concept Explanations
+    ├── Code Feedback
+    └── Quiz Generation
 
-yaml
-Copy code
+Backend (NestJS)
+│
+├── Authentication (JWT)
+├── User & Progress Management
+├── Quiz & XP Engine
+├── AI Orchestration Layer
+└── Database (PostgreSQL + Prisma)
 
----
+🤖 AI-Assisted Learning Approach
 
-# 🔧 Technology Stack
+Swadhyay uses AI as a mentor, not a replacement for learning.
 
-### **Frontend**
-- React / Next.js  
-- Tailwind CSS  
-- Framer Motion  
-- SVG + Canvas for visuals  
+The platform is designed around a Retrieval-Augmented Generation (RAG) pipeline:
 
-### **Simulation**
-- Wokwi (embedded via iframe/API)
+Authoritative textbooks (e.g., Mazidi 8051), datasheets, and curated references
+are ingested and chunked per microcontroller and topic
 
-### **AI Layer**
-- OpenAI / LLM APIs (planned & extensible)
-- Context-aware prompts
-- Code + circuit understanding
+Content is embedded and stored in a vector database
 
-### **Platform**
-- Modular architecture
-- Scalable for institutional deployment
+During interaction, only topic-relevant context is retrieved
 
----
+The LLM generates:
 
-# 🚀 Quick Start
+Explanations
 
-## **Prerequisites**
-- Node.js 18+
-- Modern browser (Chrome recommended)
+Conceptual hints
 
----
+Quiz questions (graded difficulty)
 
-## 🚀 Run Locally
+Feedback on learner-written code
 
-```bash
-git clone https://github.com/YOUR_USERNAME/Swadhyay.git
-cd Swadhyay
+This keeps outputs academically grounded, not generic AI fluff.
+
+📽️ AI-Assisted Content Generation Pipeline
+
+Video / Visual Overview
+
+AI-assisted summaries using external tools (e.g., NotebookLM)
+
+Conceptual Article
+
+Generated from textbook-grounded context
+
+Guided Simulation
+
+Topic-specific starter templates
+
+Adaptive Quiz
+
+First 60%: intermediate conceptual questions
+
+Final 40%: higher-difficulty reasoning questions
+
+This enforces understanding → practice → validation.
+
+🔧 Technology Stack
+Frontend
+
+React + Vite
+
+Tailwind CSS
+
+Framer Motion
+
+SVG & Canvas-based visuals
+
+Backend
+
+NestJS
+
+PostgreSQL
+
+Prisma ORM
+
+JWT Authentication
+
+Simulation
+
+Wokwi (embedded via iframe)
+
+AI Layer
+
+LLM APIs (model-agnostic)
+
+RAG-based knowledge retrieval
+
+Prompt orchestration per topic
+
+🚀 Quick Start
+Prerequisites
+
+Node.js 18+
+
+PostgreSQL
+
+Modern browser (Chrome recommended)
+
+Run Locally
+git clone https://github.com/Anti-Hero-01/swadhyay-ai-tutor.git
+cd swadhyay-ai-tutor
+
+# Frontend
 npm install
 npm run dev
-Open:
 
-arduino
-Copy code
-http://localhost:3000
-📚 Usage Flow
-1️⃣ Select Microcontroller
-Choose classic or modern MCUs (e.g., 8051)
+# Backend (separate terminal)
+cd backend
+npm install
+npm run start:dev
 
-2️⃣ Explore Pins & Architecture
-Hover-based pin explanations
 
-3️⃣ Learn via Modules
-Structured topics from beginner → advanced
+Frontend: http://localhost:5173
 
-4️⃣ Build & Simulate
-Create circuits + write code yourself
+Backend API: http://localhost:3000
 
-5️⃣ AI Reflection
-Understand mistakes and optimizations
+📚 Learning Flow
 
-6️⃣ Quiz & Unlock
-Score ≥75% to access next level
+1️⃣ Select a Microcontroller (e.g., 8051)
+2️⃣ Explore pins & architecture
+3️⃣ Learn through structured modules
+4️⃣ Build circuits & write code
+5️⃣ Receive AI-guided explanations
+6️⃣ Pass quiz to unlock next level
 
----
+🏆 Hackathon Context
 
-## 🧠 AI Mentor Capabilities
+Event: eduAI-thon
 
-Swadhyay integrates a **context-aware AI mentor** designed specifically for embedded systems education.  
-Unlike generic chatbots, the AI operates within the learner’s current circuit, code, and module context.
+Organizer: IUCEEE
 
-The AI mentor is capable of:
+Theme: AI-Driven, Personalized & Sustainable Education
 
-- Explaining **microcontroller registers, ports, and I/O behavior**
-- Identifying **logical errors and inefficiencies** in user-written code
-- Recommending **microcontroller-specific best practices**
-- Adapting explanations based on the learner’s progress and mastery level
+Target Categories
 
-This enables **personalized, on-demand mentorship** without continuous human intervention.
+Best Educational Innovation
 
----
+Best Use of AI in Learning
 
-## 🏆 Hackathon Context
+Best Sustainable Solution
 
-- **Event:** eduAI-thon  
-- **Organizer:** IUCEEE  
-- **Theme:** AI-Driven Personalized & Sustainable Education  
+Audience Choice Award
 
-### Target Award Categories
-- Best Educational Innovation  
-- Best Use of AI in Learning  
-- Best Sustainable Solution  
-- Audience Choice Award  
+📍 Project Status
 
----
+✅ Functional interactive prototype
 
-## 📍 Project Status
+🔧 Active development
 
-- ✅ Functional interactive prototype  
-- 🔧 Actively evolving and iterating  
-- 📦 Architected for scalability and research adoption  
+🧪 Research-oriented AI pipeline
 
----
+📦 Architected for scalability
 
-## 🤝 Contributing
+🤝 Contributing
 
-Contributions, academic collaborations, and feature proposals are welcome.
+Contributions and academic collaboration are welcome.
 
-If you would like to contribute:
-1. Open an issue describing the enhancement or research idea
-2. Discuss the approach with the maintainers
-3. Submit a pull request following the agreed direction
+Open an issue describing the idea
 
-This helps keep the project aligned with its educational and research goals.
+Discuss the approach
 
----
-
-## 📜 License
-
-This project is licensed under the **MIT License**.
-
-© 2026 — Swadhyay Team
-
----
-
-<div align="center">
-
-⭐ **Star this repository if Swadhyay inspires you**  
-
-Built with care to democratize embedded systems education.
-
-</div>
+Submit a pull request
