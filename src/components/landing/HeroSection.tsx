@@ -93,6 +93,7 @@ const HeroSection = () => {
               <video
                 src={encodeURI("/MC 8051 Transition.mp4")}
                 autoPlay
+                muted
                 loop
                 playsInline
                 preload="auto"

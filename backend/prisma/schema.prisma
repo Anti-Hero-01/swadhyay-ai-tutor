@@ -8,10 +8,38 @@ datasource db {
 }
 
 model User {
+  id                   String   @id @default(uuid())
+  name                 String
+  email                String   @unique
+  password             String
+  role                 String   @default("student")
+  points               Int      @default(0)
+  totalXp              Int      @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  completedModules     CompletedModule[]
+  pointsHistory        PointsHistory[]
+}
+
+model CompletedModule {
   id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      String   @default("student")
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  moduleName String
+  pointsEarned Int
+  completedAt DateTime @default(now())
+
+  @@unique([userId, moduleName])
+}
+
+model PointsHistory {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  points    Int
+  reason    String   // "module_complete", "quiz_pass", etc.
+  moduleName String?
   createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
 }

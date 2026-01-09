@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send, Cpu, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
+import { sendChatMessage } from "@/lib/api";
 
 interface Message {
   id: string;
@@ -95,19 +96,27 @@ const Chatbot = () => {
     setInput("");
     setIsTyping(true);
 
-    // Simulate thinking delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    try {
+      const data = await sendChatMessage(input, { pathname: location.pathname });
+      const response = data.response;
+      
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: response,
+      };
 
-    const response = getContextualResponse(input, location.pathname);
-    
-    const assistantMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      role: "assistant",
-      content: response,
-    };
-
-    setIsTyping(false);
-    setMessages((prev) => [...prev, assistantMessage]);
+      setMessages((prev) => [...prev, assistantMessage]);
+    } catch (error) {
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Sorry, I'm having trouble connecting. Please try again later.",
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   return (

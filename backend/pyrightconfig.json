@@ -1,0 +1,9 @@
+{
+  "typeCheckingMode": "basic",
+  "reportPrivateUsage": false,
+  "reportUnnecessaryTypeIgnore": false,
+  "reportUnusedImports": false,
+  "reportUnusedVariables": false,
+  "reportConstantRedefinition": false,
+  "pythonVersion": "3.9"
+}

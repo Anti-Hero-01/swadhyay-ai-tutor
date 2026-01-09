@@ -35,15 +35,16 @@ const Auth = () => {
   try {
     const data = await loginUser(identifier, password);
 
-    // Save JWT token
-    localStorage.setItem("token", data.access_token);
+    // ✅ Persist token
+    localStorage.setItem("auth_token", data.token);
 
-    // Mock auth - navigate to onboarding
-    navigate("/onboarding");
+    // Redirect after login
+    navigate("/hub");
   } catch (error) {
     alert("Login failed: " + (error as Error).message);
   }
 };
+
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">

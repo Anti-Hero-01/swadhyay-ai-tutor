@@ -11,6 +11,7 @@ import {
   Lock,
   ArrowLeft,
   TrendingUp,
+  Loader,
 } from "lucide-react";
 import {
   AreaChart,
@@ -23,243 +24,171 @@ import {
   RadialBarChart,
   RadialBar,
 } from "recharts";
+import { useUserPoints, useLeaderboard } from "@/hooks/usePoints";
+import { useWeeklyXp } from "@/hooks/useWeeklyXp";
 
-// Mock data
-const weeklyProgress = [
-  { day: "Mon", xp: 120 },
-  { day: "Tue", xp: 80 },
-  { day: "Wed", xp: 200 },
-  { day: "Thu", xp: 150 },
-  { day: "Fri", xp: 300 },
-  { day: "Sat", xp: 180 },
-  { day: "Sun", xp: 250 },
+/* =======================
+   Helpers
+======================= */
+
+function calculateDayStreak(
+  weeklyXp: { day: string; xp: number }[],
+): number {
+  let streak = 0;
+  for (let i = weeklyXp.length - 1; i >= 0; i--) {
+    if (weeklyXp[i].xp > 0) streak++;
+    else break;
+  }
+  return streak;
+}
+
+/* =======================
+   Static Catalog (NO STATE)
+======================= */
+
+const MODULE_CATALOG = [
+  { name: "LED Basics", xp: 100 },
+  { name: "Digital I/O", xp: 150 },
+  { name: "Analog Sensors", xp: 200 },
+  { name: "PWM Control", xp: 250 },
+  { name: "Timers", xp: 300 },
 ];
 
-const accuracyData = [{ name: "Accuracy", value: 78, fill: "hsl(168, 100%, 50%)" }];
-
-const stats = [
-  { label: "Total XP", value: "2,450", icon: Zap, color: "text-primary" },
-  { label: "Day Streak", value: "7", icon: Flame, color: "text-orange-500" },
-  { label: "Quiz Accuracy", value: "78%", icon: Target, color: "text-accent" },
-  { label: "Rank", value: "#42", icon: Trophy, color: "text-yellow-500" },
+const accuracyData = [
+  { name: "Accuracy", value: 78, fill: "hsl(168, 100%, 50%)" },
 ];
 
-const modules = [
-  { name: "LED Basics", completed: true, xp: 100 },
-  { name: "Digital I/O", completed: true, xp: 150 },
-  { name: "Analog Sensors", completed: false, xp: 200, locked: false },
-  { name: "PWM Control", completed: false, xp: 250, locked: true },
-  { name: "Timers", completed: false, xp: 300, locked: true },
-];
+/* =======================
+   Component
+======================= */
 
 const Dashboard = () => {
-  const completedModules = modules.filter((m) => m.completed).length;
-  const lockedModules = modules.filter((m) => m.locked).length;
+  const { points, loading: pointsLoading } = useUserPoints();
+  const { leaderboard, loading: leaderboardLoading } = useLeaderboard();
+
+  const token = localStorage.getItem("token") ?? "";
+  const { weeklyXp, loading: weeklyXpLoading } = useWeeklyXp(token);
+
+  if (pointsLoading || weeklyXpLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  /* =======================
+     DERIVED STATE (IMPORTANT)
+  ======================= */
+
+  const completedModuleNames = new Set(
+    points?.completedModules?.map((m) => m.moduleName) ?? [],
+  );
+
+  const derivedModules = MODULE_CATALOG.map((module, index) => {
+    const completed = completedModuleNames.has(module.name);
+    const locked =
+      index !== 0 &&
+      !completedModuleNames.has(MODULE_CATALOG[index - 1].name);
+
+    return { ...module, completed, locked };
+  });
+
+  const completedModules = derivedModules.filter((m) => m.completed).length;
+  const lockedModules = derivedModules.filter((m) => m.locked).length;
+
+  const totalXp = points?.totalXp ?? 0;
+  const dayStreak = calculateDayStreak(weeklyXp);
+
+  const userRank =
+    leaderboard.findIndex((u) => u.name === points?.name) + 1 || "—";
+
+  const stats = [
+    { label: "Total XP", value: totalXp, icon: Zap, color: "text-primary" },
+    { label: "Day Streak", value: dayStreak, icon: Flame, color: "text-orange-500" },
+    { label: "Quiz Accuracy", value: "78%", icon: Target, color: "text-accent" },
+    { label: "Rank", value: `#${userRank}`, icon: Trophy, color: "text-yellow-500" },
+  ];
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 bg-background/80 backdrop-blur border-b">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between">
           <div className="flex items-center gap-4">
             <Link to="/hub">
               <Button variant="ghost" size="icon">
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft />
               </Button>
             </Link>
-            <div className="flex items-center gap-3">
-              <Cpu className="w-8 h-8 text-primary" />
-              <span className="text-xl font-bold gradient-text">Dashboard</span>
-            </div>
+            <Cpu className="w-8 h-8 text-primary" />
+            <span className="text-xl font-bold gradient-text">Dashboard</span>
           </div>
-          <Link to="/hub">
-            <Button variant="heroOutline" size="sm">
-              Continue Learning
-            </Button>
-          </Link>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* Stats Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
-        >
-          {stats.map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="glass-card rounded-2xl p-6"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <stat.icon className={`w-6 h-6 ${stat.color}`} />
-                <TrendingUp className="w-4 h-4 text-accent" />
-              </div>
-              <div className="text-3xl font-bold text-foreground mb-1">
-                {stat.value}
-              </div>
+        {/* Stats */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {stats.map((stat) => (
+            <div key={stat.label} className="glass-card p-6 rounded-xl">
+              <stat.icon className={`w-6 h-6 ${stat.color}`} />
+              <div className="text-3xl font-bold mt-2">{stat.value}</div>
               <div className="text-sm text-muted-foreground">{stat.label}</div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
-
-        {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          {/* XP Chart */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="lg:col-span-2 glass-card rounded-2xl p-6"
-          >
-            <h3 className="text-lg font-semibold text-foreground mb-6">
-              Weekly XP Progress
-            </h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={weeklyProgress}>
-                  <defs>
-                    <linearGradient id="xpGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="hsl(168, 100%, 50%)" stopOpacity={0.4} />
-                      <stop offset="100%" stopColor="hsl(168, 100%, 50%)" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(0, 0%, 15%)" />
-                  <XAxis
-                    dataKey="day"
-                    stroke="hsl(0, 0%, 40%)"
-                    fontSize={12}
-                  />
-                  <YAxis stroke="hsl(0, 0%, 40%)" fontSize={12} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "hsl(0, 0%, 5%)",
-                      border: "1px solid hsl(0, 0%, 15%)",
-                      borderRadius: "8px",
-                    }}
-                    labelStyle={{ color: "hsl(0, 0%, 98%)" }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="xp"
-                    stroke="hsl(168, 100%, 50%)"
-                    strokeWidth={2}
-                    fill="url(#xpGradient)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </motion.div>
-
-          {/* Accuracy Ring */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="glass-card rounded-2xl p-6"
-          >
-            <h3 className="text-lg font-semibold text-foreground mb-4">
-              Quiz Accuracy
-            </h3>
-            <div className="h-48 relative">
-              <ResponsiveContainer width="100%" height="100%">
-                <RadialBarChart
-                  cx="50%"
-                  cy="50%"
-                  innerRadius="60%"
-                  outerRadius="90%"
-                  data={accuracyData}
-                  startAngle={90}
-                  endAngle={-270}
-                >
-                  <RadialBar
-                    background={{ fill: "hsl(0, 0%, 12%)" }}
-                    dataKey="value"
-                    cornerRadius={10}
-                  />
-                </RadialBarChart>
-              </ResponsiveContainer>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-foreground">78%</div>
-                  <div className="text-sm text-muted-foreground">Accuracy</div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
         </div>
 
-        {/* Modules Progress */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="glass-card rounded-2xl p-6"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-foreground">
-              Module Progress
-            </h3>
-            <div className="flex items-center gap-4 text-sm">
-              <span className="text-muted-foreground">
-                <span className="text-accent font-medium">{completedModules}</span>{" "}
-                Completed
-              </span>
-              <span className="text-muted-foreground">
-                <span className="text-orange-500 font-medium">{lockedModules}</span>{" "}
-                Locked
-              </span>
-            </div>
+        {/* Modules */}
+        <div className="glass-card p-6 rounded-2xl mb-8">
+          <div className="flex justify-between mb-6">
+            <h3 className="text-lg font-semibold">Module Progress</h3>
+            <span className="text-sm text-muted-foreground">
+              {completedModules} Completed · {lockedModules} Locked
+            </span>
           </div>
 
           <div className="space-y-3">
-            {modules.map((module, index) => (
+            {derivedModules.map((module) => (
               <div
                 key={module.name}
-                className={`flex items-center justify-between p-4 rounded-xl border transition-colors ${
+                className={`flex justify-between p-4 rounded-xl border ${
                   module.completed
                     ? "bg-accent/10 border-accent/30"
                     : module.locked
-                    ? "bg-secondary/50 border-border opacity-60"
-                    : "bg-secondary border-border hover:border-primary/50"
+                    ? "opacity-60"
+                    : "hover:border-primary/50"
                 }`}
               >
-                <div className="flex items-center gap-4">
-                  <div
-                    className={`p-2 rounded-lg ${
-                      module.completed
-                        ? "bg-accent/20 text-accent"
-                        : module.locked
-                        ? "bg-muted text-muted-foreground"
-                        : "bg-primary/20 text-primary"
-                    }`}
-                  >
-                    {module.locked ? (
-                      <Lock className="w-5 h-5" />
-                    ) : (
-                      <BookOpen className="w-5 h-5" />
-                    )}
-                  </div>
+                <div className="flex gap-3">
+                  {module.locked ? <Lock /> : <BookOpen />}
                   <div>
-                    <h4 className="font-medium text-foreground">{module.name}</h4>
-                    <p className="text-sm text-muted-foreground">
+                    <div className="font-medium">{module.name}</div>
+                    <div className="text-sm text-muted-foreground">
                       {module.xp} XP
-                    </p>
+                    </div>
                   </div>
                 </div>
                 {module.completed && (
-                  <span className="px-3 py-1 rounded-full bg-accent/20 text-accent text-sm font-medium">
-                    Completed
-                  </span>
+                  <span className="text-accent font-medium">Completed</span>
                 )}
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
+
+        {/* Leaderboard */}
+        {!leaderboardLoading && leaderboard.length > 0 && (
+          <div className="glass-card p-6 rounded-2xl">
+            <h3 className="text-lg font-semibold mb-4">Top Learners</h3>
+            {leaderboard.slice(0, 5).map((user) => (
+              <div key={user.id} className="flex justify-between p-3">
+                <span>{user.name}</span>
+                <span>{user.points} pts</span>
+              </div>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );
