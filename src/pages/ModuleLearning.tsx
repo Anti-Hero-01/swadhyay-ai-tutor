@@ -19,15 +19,7 @@ import AICodeMentor from "@/components/AICodeMentor";
 const ModuleLearning = () => {
   const { mcId, topicId, moduleId } = useParams();
   const [activeTab, setActiveTab] = useState("video");
-  const [completedSections, setCompletedSections] = useState<string[]>(() => {
-    try {
-      if (!moduleId) return [];
-      const secs = ["video", "article", "simulation", "quiz"];
-      return secs.filter((s) => localStorage.getItem(`completed-${moduleId}-${s}`) === "true");
-    } catch (e) {
-      return [];
-    }
-  });
+  const [completedSections, setCompletedSections] = useState<string[]>([]);
 
   const progress = {
     video: completedSections.includes("video") ? 100 : 0,
@@ -43,13 +35,9 @@ const ModuleLearning = () => {
     (progress.quiz * 0.3);
 
   const markComplete = (section: string) => {
-    if (!moduleId) return;
-    try {
-      localStorage.setItem(`completed-${moduleId}-${section}`, "true");
-    } catch (e) {
-      // ignore
+    if (!completedSections.includes(section)) {
+      setCompletedSections([...completedSections, section]);
     }
-    setCompletedSections((prev) => (prev.includes(section) ? prev : [...prev, section]));
   };
 
   const navigate = useNavigate();
@@ -225,67 +213,6 @@ const ModuleLearning = () => {
                   R = (5V - 2V) / 0.02A = 150Ω
                 </div>
               </article>
-                <article className="prose prose-invert max-w-none">
-                  <h2 className="text-2xl font-bold text-foreground mb-4">LED ON and OFF Using 8051 Microcontroller</h2>
-
-                  <h3 className="text-lg font-semibold text-foreground mb-2">What Does <b>LED ON/OFF</b> Mean?</h3>
-                  <p className="text-muted-foreground mb-4">
-                    <b>LED ON/OFF</b> means controlling an LED so that it can be:
-                  </p>
-                  <ul className="list-disc list-inside text-muted-foreground space-y-2 mb-4">
-                    <li>Turned <b>ON</b> by the microcontroller</li>
-                    <li>Turned <b>OFF</b> by the microcontroller</li>
-                  </ul>
-                  <p className="text-muted-foreground mb-4">Unlike blinking, here the LED does not toggle automatically. Instead, it turns ON or OFF based on program logic.</p>
-
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Why Start With LED ON/OFF in 8051?</h3>
-                  <ul className="list-disc list-inside text-muted-foreground space-y-2 mb-4">
-                    <li>It teaches how output pins work</li>
-                    <li>It shows how software controls hardware</li>
-                    <li>It builds confidence before moving to blinking, timers, or interrupts</li>
-                    <li>Every complex project starts from this concept</li>
-                  </ul>
-
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Understanding the LED</h3>
-                  <ul className="list-disc list-inside text-muted-foreground space-y-2 mb-4">
-                    <li><b>Anode (+)</b> → Longer leg</li>
-                    <li><b>Cathode (–)</b> → Shorter leg</li>
-                  </ul>
-                  <p className="text-muted-foreground mb-4">LED Behavior: <b>HIGH (1)</b> → LED turns <b>ON</b>, <b>LOW (0)</b> → LED turns <b>OFF</b></p>
-
-                  <h3 className="text-lg font-semibold text-foreground mb-2">8051 Output Pins Explained</h3>
-                  <p className="text-muted-foreground mb-2">The 8051 has four ports: <b>P0</b>, <b>P1</b>, <b>P2</b>, <b>P3</b>. Each port has 8 pins. Example: <b>P1.0</b> → Pin 0 of Port 1.</p>
-                  <p className="text-muted-foreground mb-4">If an LED is connected to <b>P1.0</b>: <b>P1.0 = 1</b> → LED ON, <b>P1.0 = 0</b> → LED OFF</p>
-
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Circuit Connection</h3>
-                  <ol className="list-decimal list-inside text-muted-foreground space-y-2 mb-4">
-                    <li>Connect LED anode to <b>P1.0</b></li>
-                    <li>Connect LED cathode to 330Ω resistor</li>
-                    <li>Connect resistor to GND</li>
-                    <li>Power the 8051 with 5V</li>
-                  </ol>
-
-                  <h3 className="text-lg font-semibold text-foreground mb-2">LED ON Program</h3>
-                  <pre className="bg-secondary rounded-lg p-4 font-mono text-sm mb-4">
-  {`#include <reg51.h>
-  void main() {
-      P1 = 0x01;   // Turn LED ON
-      while(1);    // Stay here forever
-  }`}
-                  </pre>
-
-                  <h3 className="text-lg font-semibold text-foreground mb-2">LED OFF Program</h3>
-                  <pre className="bg-secondary rounded-lg p-4 font-mono text-sm mb-4">
-  {`#include <reg51.h>
-  void main() {
-      P1 = 0x00;   // Turn LED OFF
-      while(1);    // Stay here forever
-  }`}
-                  </pre>
-
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Try This Yourself</h3>
-                  <p className="text-muted-foreground mb-4">Change <b>P1 = 0x01</b> to <b>P1 = 0x02</b> → LED should be connected to <b>P1.1</b>.</p>
-                </article>
               <Button
                 variant="hero"
                 onClick={() => markComplete("article")}
@@ -319,7 +246,10 @@ const ModuleLearning = () => {
                 </p>
                 <Button
                   variant="hero"
-                  onClick={() => markComplete("simulation")}
+                  onClick={() => {
+                    // Use the full module completion handler so it persists and advances
+                    markModuleCompleted();
+                  }}
                   disabled={completedSections.includes("simulation")}
                 >
                   {completedSections.includes("simulation") ? "Completed ✓" : "Mark Complete"}
@@ -354,7 +284,7 @@ const ModuleLearning = () => {
       {/* Fullscreen simulation overlay when Simulation tab is active */}
       {activeTab === "simulation" && (
         <div className="fixed inset-0 z-50 bg-background/90 p-4 flex flex-col">
-            <div className="max-w-7xl mx-auto w-full flex items-center justify-between mb-4">
+          <div className="max-w-7xl mx-auto w-full flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <Button variant="ghost" size="icon" onClick={() => setActiveTab("video")}>
                 <ArrowLeft className="w-4 h-4" />
@@ -362,8 +292,8 @@ const ModuleLearning = () => {
               <span className="text-lg font-semibold text-foreground">Wokwi Simulation</span>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="secondary" onClick={() => markComplete("simulation")}>
-                {completedSections.includes("simulation") ? "Completed ✓" : "Mark Complete"}
+              <Button variant="secondary" onClick={markModuleCompleted}>
+                Mark Complete & Next
               </Button>
               <Button variant="ghost" size="icon" onClick={() => setActiveTab("video")}>
                 <X className="w-4 h-4" />
